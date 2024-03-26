@@ -1,0 +1,36 @@
+
+const livros = require('../livros'); 
+
+function getIndex(req, res) {
+  const tipo = req.query.tipo || ''; 
+  res.render('index', { livros, tipo });
+}
+
+function buscarLivros(req, res) {
+  const { tipo, titulo, ano } = req.query;
+  let resultado = livros;
+
+  if (tipo === 'titulo' && titulo) {
+    resultado = resultado.filter(livro => livro.titulo.toLowerCase().includes(titulo.toLowerCase()));
+  } else if (tipo === 'ano' && ano) {
+    res.redirect(`/buscar/ano/${ano}`);
+    return; 
+  } else {
+    resultado = []; 
+  }
+
+  res.render('index', { livros: resultado, tipo });
+}
+
+function buscarPorAno(req, res) {
+  const { ano } = req.params;
+  const valorNumerico = parseInt(ano);
+  const resultado = livros.filter(livro => livro.ano === valorNumerico);
+  res.render('index', { livros: resultado, tipo: 'ano' });
+}
+
+module.exports = {
+  getIndex,
+  buscarLivros,
+  buscarPorAno
+};
